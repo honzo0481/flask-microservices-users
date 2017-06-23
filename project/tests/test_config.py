@@ -27,6 +27,26 @@ class TestDevelopmentConfig(TestCase):
         )
 
 
+class TestTestingConfig(TestCase):
+    """Test config tests."""
+
+    def create_app(self):
+        """Create an app and return it."""
+        app.config.from_object('project.config.TestingConfig')
+        return app
+
+    def test_app_is_testing(self):
+        """Config settings should be a match for test."""
+        self.assertTrue(app.config['SECRET_KEY'] is 'my_precious')
+        self.assertTrue(app.config['DEBUG'])
+        self.assertTrue(app.config['TESTING'])
+        self.assertFalse(app.config['PRESERVE_CONTEXT_ON_EXCEPTION'])
+        self.assertTrue(
+            app.config['SQLALCHEMY_DATABASE_URI'] ==
+            'postgres://postgres:postgres@users-db:5432/users_test'
+        )
+
+
 class TestProductionConfig(TestCase):
     """Production config tests."""
 
