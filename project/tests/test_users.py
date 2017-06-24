@@ -16,12 +16,12 @@ class TestUserService(BaseTestCase):
         self.assertIn('success', data['status'])
 
     def test_add_user(self):
-        """Adding a new user to the db should be possible."""
+        """Ensure a new user can be added to the database."""
         with self.client:
             response = self.client.post(
                 '/users',
                 data=json.dumps(dict(
-                    useruser='robert',
+                    username='rob',
                     email='gonzalesre@gmail.com'
                 )),
                 content_type='application/json',
