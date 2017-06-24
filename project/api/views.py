@@ -1,6 +1,7 @@
 """User views module."""
 
 from flask import Blueprint, jsonify, request, make_response
+from sqlalchemy import exc
 from project.api.models import User
 from project import db
 
@@ -20,12 +21,34 @@ def ping_pong():
 def add_user():
     """Add a user."""
     post_data = request.get_json()
+    if not post_data:
+        response_object = {
+            'status': 'fail',
+            'message': 'Invalid payload.'
+        }
+        return make_response(jsonify(response_object)), 400
     username = post_data.get('username')
     email = post_data.get('email')
-    db.session.add(User(username=username, email=email))
-    db.session.commit()
-    response_object = {
-        'status': 'success',
-        'message': f'{email} was added!'
-    }
-    return make_response(jsonify(response_object)), 201
+    try:
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            db.session.add(User(username=username, email=email))
+            db.session.commit()
+            response_object = {
+                'status': 'success',
+                'message': f'{email} was added!'
+            }
+            return make_response(jsonify(response_object)), 201
+        else:
+            response_object = {
+                'status': 'fail',
+                'message': 'Sorry. That email already exists.'
+            }
+            return make_response(jsonify(response_object)), 400
+    except exc.IntegrityError as e:
+        db.session().rollback()
+        response_object = {
+            'status': 'fail',
+            'message': 'Invalid payload.'
+        }
+        return make_response(jsonify(response_object)), 400
