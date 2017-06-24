@@ -6,6 +6,14 @@ from project.api.models import User
 from project.tests.base import BaseTestCase
 
 
+def add_user(username, email):
+    """Add a user to the database."""
+    user = User(username=username, email=email)
+    db.session.add(user)
+    db.session.commit()
+    return user
+
+
 class TestUserService(BaseTestCase):
     """Tests for the user service."""
 
@@ -86,10 +94,8 @@ class TestUserService(BaseTestCase):
             self.assertIn('fail', data['status'])
 
     def test_single_user(self):
-        """Getting a single user should return only that users's data."""
-        user = User(username='rob', email='gonzalesre@gmail.com')
-        db.session.add(user)
-        db.session.commit()
+        """Getting a single user should return exactly that users's data."""
+        user = add_user('rob', 'gonzalesre@gmail.com')
         with self.client:
             response = self.client.get(f'/users/{user.id}') # noqa
             data = json.loads(response.data.decode())
@@ -116,3 +122,22 @@ class TestUserService(BaseTestCase):
             self.assertEqual(response.status_code, 404)
             self.assertIn('User does not exist.', data['message'])
             self.assertIn('fail', data['status'])
+
+    def test_all_users(self):
+        """Getting all users should return all user's data."""
+        add_user('rob', 'gonzalesre@gmail.com')
+        add_user('bob', 'test@test.com')
+        with self.client:
+            response = self.client.get('/users')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['users']), 2)
+            self.assertTrue('created_at' in data['data']['users'][0])
+            self.assertTrue('created_at' in data['data']['users'][1])
+            self.assertIn('rob', data['data']['users'][0]['username'])
+            self.assertIn(
+                'gonzalesre@gmail.com', data['data']['users'][0]['email']
+            )
+            self.assertIn('bob', data['data']['users'][1]['username'])
+            self.assertIn('test@test.com', data['data']['users'][1]['email'])
+            self.assertIn('success', data['status'])
