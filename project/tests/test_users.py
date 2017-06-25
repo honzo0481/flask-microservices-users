@@ -141,3 +141,34 @@ class TestUserService(BaseTestCase):
             self.assertIn('bob', data['data']['users'][1]['username'])
             self.assertIn('test@test.com', data['data']['users'][1]['email'])
             self.assertIn('success', data['status'])
+
+    def test_main_no_users(self):
+        """Index route should display a message when there are no users in db."""
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'<h1>All Users</h1>', response.data)
+        self.assertIn(b'<p>No users!</p>', response.data)
+
+    def test_main_with_users(self):
+        """Index route should display users when there are users in db."""
+        add_user('rob', 'gonzalere@gmial.com')
+        add_user('test', 'test@test.com')
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'<h1>All Users</h1>', response.data)
+        self.assertNotIn(b'<p>No users!</p>', response.data)
+        self.assertIn(b'<strong>rob</strong>', response.data)
+        self.assertIn(b'<strong>test</strong>', response.data)
+
+    def test_main_add_user(self):
+        """Ensure a new user can be added to the database."""
+        with self.client:
+            response = self.client.post(
+                '/',
+                data=dict(username='rob', email='gonzalesre@gmail.com'),
+                follow_redirects=True
+            )
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'<h1>All Users</h1>', response.data)
+            self.assertNotIn(b'<p>No users!</p>', response.data)
+            self.assertIn(b'<strong>rob</strong>', response.data)
