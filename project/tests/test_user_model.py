@@ -23,7 +23,7 @@ class TestUserModel(BaseTestCase):
 
     def test_add_user_duplicate_username(self):
         """Adding a duplicate username should fail."""
-        add_user('test@test.com', 'test@test.com', 'test')
+        add_user('test@test.com', 'test@test.com')
         duplicate_user = User(
             username='test@test.com',
             email='test@test2.com'
@@ -33,7 +33,7 @@ class TestUserModel(BaseTestCase):
 
     def test_add_user_duplicate_email(self):
         """Adding a duplicate email should fail."""
-        add_user('test@test.com', 'test@test.com', 'test')
+        add_user('test@test.com', 'test@test.com')
         duplicate_user = User(
             username='test@test2.com',
             email='test@test.com'
