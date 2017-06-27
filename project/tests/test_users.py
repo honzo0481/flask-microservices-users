@@ -131,8 +131,8 @@ class TestUserService(BaseTestCase):
             self.assertTrue('created_at' in data['data']['users'][1])
             self.assertIn('bob', data['data']['users'][0]['username'])
             self.assertIn(
-                'gonzalesre@gmail.com', data['data']['users'][0]['email']
+                'test@test.com', data['data']['users'][0]['email']
             )
             self.assertIn('rob', data['data']['users'][1]['username'])
-            self.assertIn('test@test.com', data['data']['users'][1]['email'])
+            self.assertIn('gonzalesre@gmail.com', data['data']['users'][1]['email'])
             self.assertIn('success', data['status'])
