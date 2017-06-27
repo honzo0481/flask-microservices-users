@@ -3,6 +3,8 @@
 from project import db
 from project.api.models import User
 from project.api.tests.base import BaseTestCase
+from project.test.utils import add_user
+
 from sqlalchemy.exc import IntegrityError
 
 
@@ -11,12 +13,7 @@ class TestUserModel(BaseTestCase):
 
     def test_add_user(self):
         """You should be able to add a user to the db."""
-        user = User(
-            username='test@test.com',
-            email='test@test.com'
-        )
-        db.session.add(user)
-        db.session.commit()
+        user = add_user('test@test.com', 'test@test.com')
         self.assertTrue(user.id)
         self.assertEqual(user.username, 'test@test.com')
         self.assertEqual(user.email, 'test@test.com')
@@ -25,12 +22,7 @@ class TestUserModel(BaseTestCase):
 
     def test_add_user_duplicate_username(self):
         """Adding a duplicate username should fail."""
-        user = User(
-            username='test@test.com',
-            email='test@test.com'
-        )
-        db.session.add(user)
-        db.session.commit()
+        add_user('test@test.com', 'test@test.com')
         duplicate_user = User(
             username='test@test.com',
             email='test@test2.com'
@@ -40,12 +32,7 @@ class TestUserModel(BaseTestCase):
 
     def test_add_user_duplicate_email(self):
         """Adding a duplicate email should fail."""
-        user = User(
-            username='test@test.com',
-            email='test@test.com'
-        )
-        db.session.add(user)
-        db.session.commit()
+        add_user('test@test.com', 'test@test.com')
         duplicate_user = User(
             username='test@test2.com',
             email='test@test.com'
