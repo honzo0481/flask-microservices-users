@@ -18,6 +18,21 @@ class User(db.Model):
     active = db.Column(db.Boolean(), default=True, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False)
 
+    @staticmethod
+    def decode_auth_token(auth_token):
+        """Decode an auth token.
+
+        param: (str) auth_token
+        return: (str) sub
+        """
+        try:
+            payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'))
+            return payload['sub']
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please log in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please log in again.'
+
     def __init__(self, username, email, password, created_at=datetime.datetime.now()):
         """Initialize a user object."""
         self.username = username
@@ -32,7 +47,9 @@ class User(db.Model):
         try:
             payload = {
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(
-                    days=0, seconds=5),
+                    days=current_app.config.get('TOKEN_EXPIRATION_DAYS'),
+                    seconds=current_app.config.get('TOKEN_EXPIRATION_SECONDS')
+                ),
                 'iat': datetime.datetime.utcnow(),
                 'sub': user_id
             }

@@ -54,3 +54,10 @@ class TestUserModel(BaseTestCase):
         user = add_user('test@test.com', 'test@test.com', 'test')
         auth_token = user.encode_auth_token(user.id)
         self.assertTrue(isinstance(auth_token, bytes))
+
+    def test_decode_auth_token(self):
+        """User model should return user_id when decoded."""
+        user = add_user('test@test.com', 'test@test.com', 'test')
+        auth_token = user.encode_auth_token(user.id)
+        self.assertTrue(isinstance(auth_token, bytes))
+        self.assertTrue(User.decode_auth_token(auth_token), user.id)
