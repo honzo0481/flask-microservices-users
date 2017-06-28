@@ -26,7 +26,8 @@ class TestUserService(BaseTestCase):
                 '/users',
                 data=json.dumps(dict(
                     username='rob',
-                    email='gonzalesre@gmail.com'
+                    email='gonzalesre@gmail.com',
+                    password='test'
                 )),
                 content_type='application/json',
             )
@@ -68,7 +69,8 @@ class TestUserService(BaseTestCase):
                 '/users',
                 data=json.dumps(dict(
                     username='rob',
-                    email='gonzalesre@gmail.com'
+                    email='gonzalesre@gmail.com',
+                    password='test'
                 )),
                 content_type='application/json'
             )
@@ -76,7 +78,8 @@ class TestUserService(BaseTestCase):
                 '/users',
                 data=json.dumps(dict(
                     username='rob',
-                    email='gonzalesre@gmail.com'
+                    email='gonzalesre@gmail.com',
+                    password='test'
                 )),
                 content_type='application/json'
             )
@@ -89,7 +92,7 @@ class TestUserService(BaseTestCase):
 
     def test_single_user(self):
         """Getting a single user should return exactly that users's data."""
-        user = add_user('rob', 'gonzalesre@gmail.com')
+        user = add_user('rob', 'gonzalesre@gmail.com', 'test')
         with self.client:
             response = self.client.get(f'/users/{user.id}') # noqa
             data = json.loads(response.data.decode())
@@ -120,7 +123,7 @@ class TestUserService(BaseTestCase):
     def test_all_users(self):
         """Getting all users should return all user's data."""
         created = datetime.datetime.now() + datetime.timedelta(-30)
-        add_user('rob', 'gonzalesre@gmail.com', created)
+        add_user('rob', 'gonzalesre@gmail.com', 'test', created)
         add_user('bob', 'test@test.com', 'test')
         with self.client:
             response = self.client.get('/users')
