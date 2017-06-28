@@ -48,3 +48,9 @@ class TestUserModel(BaseTestCase):
         user_one = add_user('test@test.com', 'test@test.com', 'test')
         user_two = add_user('test@test2.com', 'test@test2.com', 'test')
         self.assertNotEqual(user_one.password, user_two.password)
+
+    def test_encode_auth_token(self):
+        """User model should be able to generate encoded auth tokens."""
+        user = add_user('test@test.com', 'test@test.com', 'test')
+        auth_token = user.encode_auth_token(user.id)
+        self.assertTrue(isinstance(auth_token, bytes))
