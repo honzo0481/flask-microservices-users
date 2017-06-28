@@ -21,7 +21,7 @@ class User(db.Model):
         """Initialize a user object."""
         self.username = username
         self.email = email
-        self.pasword = bcrypt.generate_password_hash(
+        self.password = bcrypt.generate_password_hash(
             password, current_app.config.get('BRCYPT_LOG_ROUNDS')
         ).decode()
         self.created_at = created_at
