@@ -16,14 +16,14 @@ class TestAuthBlueprint(BaseTestCase):
             response = self.client.post(
                 '/auth/register',
                 data=json.dumps(dict(
-                    username='test@test.com',
+                    username='justatest',
                     email='test@test.com',
                     password='123456'
                 )),
                 content_type='application/json'
             )
             data = json.loads(response.data.decode())
-            self.assertTrue(data['status'] == 'status')
+            self.assertTrue(data['status'] == 'success')
             self.assertTrue(data['message'] == 'Successfully registered.')
             self.assertTrue(data['auth_token'])
             self.assertTrue(response.content_type == 'application/json')
